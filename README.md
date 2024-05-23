@@ -1,3 +1,7 @@
+### USE SIMSWAP PLUS IP-ADAPTER WITH THIS NOTEBOOK https://colab.research.google.com/drive/1LFs7xajssDmQ8LfCWtlQwBR7XyWKgWDB 
+
+
+
 # SimSwap: An Efficient Framework For High Fidelity Face Swapping
 ## Proceedings of the 28th ACM International Conference on Multimedia
 **The official repository with Pytorch**
