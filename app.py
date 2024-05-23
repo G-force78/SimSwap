@@ -26,6 +26,7 @@ from util.norm import SpecificNorm
 from parsing_model.model import BiSeNet
 from datetime import datetime
 from gradio import gradio as gr
+import tempfile
 
 ######## IP FACE ########to be added ##
 import shutil
@@ -52,8 +53,10 @@ now = datetime.now()
 date_time = now.strftime("%Y-%m-%d_%H-%M-%S")
 
 
-
-
+with tempfile.TemporaryDirectory() as temp_dir:
+  # Set the temporary directory for Gradio within the block
+  os.environ["GRADIO_TEMP_DIR"] = temp_dir
+  temp_dir = "/content/SimSwap/grad"
 
 
 
@@ -151,6 +154,7 @@ def generate_swap(face_image, image_path):
         else:
             net = None
 
+        images = []
         date_time = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{date_time}.png"
         reverse2wholeimage(
@@ -166,21 +170,30 @@ def generate_swap(face_image, image_path):
             use_mask=opt.use_mask,
             norm=spNorm,
         )
-        torch.cuda.empty_cache()
+                
         
-        return images, filename
+        
+        
+        torch.cuda.empty_cache()
+        # Read the image
+        swapped_image_path = os.path.join(opt.output_path, filename)
+        swapped_image = Image.open(swapped_image_path)
+        return swapped_image
+        
+        
+        
 with gr.Blocks()as interface:
   with gr.Tab("simswap"):
       with gr.Row():
           with gr.Column():
               face_image = gr.Image(label="Face Reference Image")
               image_path = gr.Textbox(label="Image Path")
-              gallery = gr.Gallery(label="Swapped")
+              swapped_image = gr.Image(label="Swapped Image")
               generate_swap_btn = gr.Button("Swap")
               generate_swap_btn.click(
                   fn=generate_swap,
                   inputs=[face_image, image_path],
-                  outputs=gallery,
+                  outputs=swapped_image,
               )
 
 interface.launch(share=True)
