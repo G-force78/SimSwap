@@ -167,8 +167,8 @@ def generate_swap(face_image, image_path):
             norm=spNorm,
         )
         torch.cuda.empty_cache()
-
-        return filename
+        
+        return images, filename
 with gr.Blocks()as interface:
   with gr.Tab("simswap"):
       with gr.Row():
